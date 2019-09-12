@@ -2,8 +2,8 @@
 
 :root{  /* :root表示获取根元素 -> html     然后在里面定义一些变量*/
     --color-text:#666;
-    --color-high-text:#ff5777;  /*高亮*/
-    --color-tint:#ff8198;   /*导航条背景颜色*/
+    --color-high-text:#41B883;  /*高亮*/
+    --color-tint:#7ACDA8;   /*导航条背景颜色*/
     --color-background:#fff;    /*白色背景色*/
     --font-size:14px;   /*字体大小*/
     --line-hight:1.5;
