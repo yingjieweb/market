@@ -3,7 +3,7 @@
     <div v-for="(item,index) in titles"
          class="tab-control-item"
          :class="{active:index === currentIndex}" @click="itemClick(index)">
-      <spin>{{item}}</spin>
+      <span>{{item}}</span>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@
     flex: 1;
   }
 
-  .tab-control-item spin{
+  .tab-control-item span{
     padding: 5px;
   }
 
@@ -54,7 +54,7 @@
     color:#1296DB;
   }
 
-  .active spin{
+  .active span{
     border-bottom: 3px solid #1296DB;
   }
 </style>
