@@ -1,5 +1,11 @@
 <template>
   <div class="wrapper" ref="aaa">
+    <!--1、无论是否设置click：false，button都可以点击-->
+    <button @click = "btnClick">按钮</button>
+
+    <!--2、必须设置click：true,那么div才能监听点击-->
+    <div @click="btnClick">divdivdiv</div>
+
     <ul class="content">
       <button @click = "btnClick">按钮</button>
       <li>我是标签li1</li>
@@ -135,6 +141,7 @@
 
       this.scroll = new BSroll(document.querySelector('.wrapper'),{
         probeType:3,//监听滚动的position
+        click:true,
         pullUpLoad:true
       })
       this.scroll.on('scroll',(position) => {
