@@ -24,5 +24,11 @@
 </script>
 
 <style scoped>
+  .goods{
+    display: flex;
+    flex-wrap: wrap;  /*每一行显示指定合适数量的小组件*/
+    justify-content:space-around;  /*组件之间的空间均等分*/
+  }
+
 
 </style>

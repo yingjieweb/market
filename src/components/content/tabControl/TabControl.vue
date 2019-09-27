@@ -27,6 +27,7 @@
     methods:{
       itemClick(index){
         this.currentIndex = index;
+        this.$emit('tabClick',index)  //将TabControl的点击事件传出去，实现点击不同按钮显示不同数据
       }
     }
   }
