@@ -16,6 +16,10 @@
       probeType:{
         type:Number,
         default:0
+      },
+      pullUpLoad:{
+        type: Boolean,
+        default: false
       }
     },
     data(){
@@ -28,7 +32,8 @@
       //this.scroll = new BScroll(document.querySelector('.wrapper'),{})  /*这种方式不是很好，可能存在多个class类有重名wrapper*/
       this.scroll = new BScroll(this.$refs.wrapper,{  //通过ref这种凡是比较好
         click:true,
-        probeType:this.probeType
+        probeType:this.probeType,
+        pullUpLoad:this.pullUpLoad
       })
 
       //2.监听滚动的位置
@@ -36,10 +41,18 @@
         //console.log(position);
         this.$emit('scroll',position)
       })
+
+      //3.监听上拉事件
+      this.scroll.on('pullingUp',() => {
+        this.$emit('pullingUp')
+      })
     },
     methods:{
       scrollTo(x,y,time=300){
         this.scroll.scrollTo(x,y,time)
+      },
+      finishPullUp(){
+        this.scroll.finishPullUp()
       }
     }
   }
