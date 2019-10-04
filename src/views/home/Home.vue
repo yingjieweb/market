@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="loadMore">
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true">
       <home-swiper :banners = "banners"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
@@ -23,7 +23,8 @@
   import RecommendView from './childComps/RecommendView'
   import FeatureView from  './childComps/FeatureView'
 
-  import {getHomeMultidata,getHomeGoods} from "network/home";
+  import {getHomeMultidata,getHomeGoods} from "network/home"
+  import {debounce} from "common/utils"
 
   export default {
     name: "Home",
@@ -63,6 +64,13 @@
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
     },
+    mounted(){
+      const refresh = debounce(this.$refs.scroll.refresh,500)  //调用防抖动函数，防止刷新过于频繁
+      //3.监听item中图片加载完成
+      this.$bus.$on('itemImageLoad',() => {
+        refresh()
+      })
+    },
     methods:{
       /**
        * 事件监听相关的方法
@@ -87,17 +95,12 @@
         //console.log(position);
         this.isShowBackTop = (-position.y) > 1000
       },
-      loadMore(){
-        this.getHomeGoods(this.currentType)
 
-        this.$refs.scroll.scroll.refresh()  //重新计算可滚动的高度
-      },
       /**
        * 网络请求相关的方法
        * */
       getHomeMultidata(){
         getHomeMultidata().then(res => {
-          //console.log(res);
           this.banners = res.data.banner.list;
           this.recommends = res.data.recommend.list;
         })
@@ -107,8 +110,6 @@
         getHomeGoods(type,page).then(res => {
           this.goods[type].list.push(...res.data.list)  //也是一种解构，新加载的数据继续push
           this.goods[type].page += 1; //请求数据之后需要在原来页码的基础上加一
-
-          this.$refs.scroll.finishPullUp()
         })
       }
     }
