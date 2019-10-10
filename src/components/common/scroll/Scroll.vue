@@ -16,6 +16,10 @@
       probeType:{
         type:Number,
         default:0
+      },
+      pullUpLoad:{
+        type:Boolean,
+        default: false
       }
     },
     data(){
@@ -38,7 +42,12 @@
         this.$emit('scroll',position)
       })
 
-      //3.监听上拉事件
+      //3.监听scroll滚动到底部
+      if(this.pullUpLoad){
+        this.scroll.on('pullingUp',() => {
+          this.$emit('pullingUp')
+        })
+      }
     },
     methods:{
       scrollTo(x,y,time=300){
@@ -49,6 +58,9 @@
       },
       refresh(){
         this.scroll && this.scroll.refresh()
+      },
+      getScrollY(){
+        return this.scroll ? this.scroll.y : 0
       }
     }
   }
