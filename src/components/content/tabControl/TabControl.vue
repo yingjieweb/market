@@ -21,7 +21,7 @@
     },
     data(){
       return {
-        currentIndex:0
+        currentIndex:0  //用来表示点击的TabControl的那个按钮了
       }
     },
     methods:{
