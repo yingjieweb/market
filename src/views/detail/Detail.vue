@@ -1,15 +1,16 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"></detail-nav-bar>
-    <scroll class="content" ref="scroll">
-      <detail-swiper :top-images="topImages"></detail-swiper>
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"></detail-nav-bar>
+    <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3">
+      <detail-swiper :top-images="topImages"></detail-swiper><!--属性：topImages    传入值：top-images-->
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
-      <goods-list :goods="recommends"></goods-list>
+      <detail-param-info ref="params" :param-info="paramInfo"></detail-param-info>
+      <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
+      <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -21,12 +22,14 @@
   import DetailGoodsInfo from  './childComps/DetailGoodsInfo'
   import DetailParamInfo from  './childComps/DetailParamInfo'
   import DetailCommentInfo from  './childComps/DetailCommentInfo'
+  import DetailBottomBar from  './childComps/DetailBottomBar'
 
   import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
 
   import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "network/detail";
   import {itemListenerMixin} from "common/mixin";
+  import {debounce} from "../../common/utils";
 
   export default {
     name: "Detail",
@@ -38,6 +41,7 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      DetailBottomBar,
       Scroll,
       GoodsList
     },
@@ -51,7 +55,10 @@
         detailInfo:{},
         paramInfo:{},
         commentInfo:{},
-        recommends:[]
+        recommends:[],
+        themeTopYs:[],
+        getThemeTopY:null,
+        currentIndex:0
       }
     },
     created() {
@@ -83,6 +90,16 @@
         if (data.rate.cRate !== 0) {
           this.commentInfo = data.rate.list[0]
         }
+
+        //8.给getThemeTopY赋值(对给this.themeTopYs赋值的操作进行防抖)
+        this.getThemeTopY = debounce(() => {
+          this.themeTopYs = [];
+          this.themeTopYs.push(0);
+          this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+          this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+          this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+          console.log(this.themeTopYs);
+        },100)
       })
 
       //3.请求推荐数据
@@ -99,7 +116,33 @@
     },
     methods:{
       imageLoad(){
-        this.$refs.scroll.refresh()
+        this.$refs.scroll.refresh();
+        this.getThemeTopY();
+      },
+      titleClick(index){
+        //console.log(index); //这里index能正确打印0，1，2，3。但是加上下面的代码点击标题就会出现标题标色不对应的问题
+        this.$refs.scroll.scrollTo(0,-this.themeTopYs[index]+44,400);   //★★★这里有点问题，不加滚动就没事
+      },
+      contentScroll(position){
+        //console.log(position)//打印此时页面滚动到的具体位置
+        //1.获取滚动的y值
+        const positionY = -position.y
+
+        //2.用positionY和主题中值进行对比，随便拿一个商品距离
+        //[0, 6280, 7083, 7299]
+        //positionY 在 0 到 6280 之间，index=0
+        //positionY 在 6280 到 7083 之间，index=1
+        //positionY 在 7083 到 7299 之间，index=2
+        //positionY 超过 7299 的时候，index=3
+        if (positionY>0 && positionY<this.themeTopYs[1]-44){  //★★★这个方法不够优化
+          this.$refs.nav.currentIndex = 0
+        }else if(positionY>this.themeTopYs[1]-44 && positionY<this.themeTopYs[2]-44){
+          this.$refs.nav.currentIndex = 1
+        }else if(positionY>this.themeTopYs[2]-44 && positionY<this.themeTopYs[3]-44){
+          this.$refs.nav.currentIndex = 2
+        }else if(positionY>this.themeTopYs[3]-44){
+          this.$refs.nav.currentIndex = 3
+        }
       }
     }
   }
@@ -120,6 +163,6 @@
   }
 
   .content{
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 58px);
   }
 </style>
