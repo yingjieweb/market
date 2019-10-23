@@ -9,7 +9,7 @@
       <tab-control :titles="['流行','新款','精选']" @tabClick = "tabClick" ref="tabControl2"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
-    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <back-top @click.native="backTop" v-show="showBackTop"></back-top>
   </div>
 </template>
 
@@ -18,14 +18,13 @@
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
   import Scroll from  'components/common/scroll/Scroll'
-  import BackTop from  'components/content/backTop/BackTop'
 
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from  './childComps/FeatureView'
 
   import {getHomeMultidata,getHomeGoods} from "network/home"
-  import {itemListenerMixin} from "common/mixin";
+  import {itemListenerMixin,backTopMixin} from "common/mixin";
 
   export default {
     name: "Home",
@@ -36,10 +35,9 @@
       RecommendView,
       FeatureView,
       GoodsList,
-      Scroll,
-      BackTop
+      Scroll
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin,backTopMixin],
     data(){
       return {
         banners:[],
@@ -50,7 +48,6 @@
           'sell':{page:0,list:[]},
         },
         currentType:'pop',
-        isShowBackTop:false,
         tabOffsetTop:0,
         isTabFixed:false,
         saveY:0
@@ -106,12 +103,9 @@
         this.$refs.tabControl1.currentIndex = index;
         this.$refs.tabControl2.currentIndex = index;
       },
-      backClick(){
-        this.$refs.scroll.scrollTo(0,0,500)
-      },
       contentScroll(position){
         //1.判断backTop是否显示
-        this.isShowBackTop = (-position.y) > 1000
+        this.showBackTop = (-position.y) > 1000
 
         //2.决定tabControl是否吸顶（position:fixed）
         this.isTabFixed = (-position.y) > this.tabOffsetTop

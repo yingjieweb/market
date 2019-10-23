@@ -47,6 +47,7 @@
       // 1.操作DOM, 在前后添加Slide
       setTimeout(() => {
         this.handleDom();
+
         // 2.开启定时器
         this.startTimer();
       }, 100)
@@ -70,11 +71,14 @@
       scrollContent: function (currentPosition) {
         // 0.设置正在滚动
         this.scrolling = true;
+
         // 1.开始滚动动画
         this.swiperStyle.transition ='transform '+ this.animDuration + 'ms';
         this.setTransform(currentPosition);
+
         // 2.判断滚动到的位置
         this.checkPosition();
+
         // 4.滚动完成
         this.scrolling = false
       },
@@ -92,6 +96,7 @@
             this.currentIndex = this.slideCount;
             this.setTransform(-this.currentIndex * this.totalWidth);
           }
+
           // 2.结束移动后的回调
           this.$emit('transitionEnd', this.currentIndex-1);
         }, this.animDuration)
@@ -111,8 +116,10 @@
         // 1.获取要操作的元素
         let swiperEl = document.querySelector('.swiper');
         let slidesEls = swiperEl.getElementsByClassName('slide');
+
         // 2.保存个数
         this.slideCount = slidesEls.length;
+
         // 3.如果大于1个, 那么在前后分别添加一个slide
         if (this.slideCount > 1) {
           let cloneFirst = slidesEls[0].cloneNode(true);

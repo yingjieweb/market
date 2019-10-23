@@ -10,7 +10,8 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <back-top @click.native="backTop" v-show="showBackTop"></back-top>
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -28,7 +29,7 @@
   import GoodsList from 'components/content/goods/GoodsList'
 
   import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "network/detail";
-  import {itemListenerMixin} from "common/mixin";
+  import {itemListenerMixin,backTopMixin} from "common/mixin";
   import {debounce} from "../../common/utils";
 
   export default {
@@ -45,7 +46,7 @@
       Scroll,
       GoodsList
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin,backTopMixin],
     data(){
       return{
         iid:null,
@@ -98,7 +99,7 @@
           this.themeTopYs.push(this.$refs.params.$el.offsetTop);
           this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
           this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-          console.log(this.themeTopYs);
+          //console.log(this.themeTopYs);
         },100)
       })
 
@@ -128,6 +129,9 @@
         //1.获取滚动的y值
         const positionY = -position.y
 
+        //1.判断backTop是否显示
+        this.showBackTop = (-position.y) > 1000
+
         //2.用positionY和主题中值进行对比，随便拿一个商品距离
         //[0, 6280, 7083, 7299]
         //positionY 在 0 到 6280 之间，index=0
@@ -143,6 +147,19 @@
         }else if(positionY>this.themeTopYs[3]-44){
           this.$refs.nav.currentIndex = 3
         }
+      },
+      addToCart(){
+        //1.获取购物车需要展示的信息
+        const product = {};
+        product.iid = this.iid;
+        product.image = this.topImages[0];
+        product.title = this.detailInfo.title;
+        product.desc = this.detailInfo.desc;
+        product.price = this.detailInfo.realPrice;
+
+        //2.将商品加入到购物车里面
+        //this.$store.cartList.push(product)    //vuex修改state的时候要通过mutations修改
+        this.$store.dispatch('addCart',product);  //actions中处理异步和判断
       }
     }
   }
