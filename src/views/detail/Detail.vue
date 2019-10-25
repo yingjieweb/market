@@ -32,6 +32,8 @@
   import {itemListenerMixin,backTopMixin} from "common/mixin";
   import {debounce} from "../../common/utils";
 
+  import { mapActions } from 'vuex'
+
   export default {
     name: "Detail",
     components:{
@@ -59,7 +61,7 @@
         recommends:[],
         themeTopYs:[],
         getThemeTopY:null,
-        currentIndex:0
+        currentIndex:0,
       }
     },
     created() {
@@ -116,6 +118,7 @@
       this.$bus.$off('itemImageLoad',this.itemImgListener)
     },
     methods:{
+      ...mapActions(['addCart']),
       imageLoad(){
         this.$refs.scroll.refresh();
         this.getThemeTopY();
@@ -153,13 +156,19 @@
         const product = {};
         product.iid = this.iid;
         product.image = this.topImages[0];
-        product.title = this.detailInfo.title;
-        product.desc = this.detailInfo.desc;
-        product.price = this.detailInfo.realPrice;
+        product.title = this.goods.title;
+        product.desc = this.goods.desc;
+        product.price = this.goods.realPrice;
 
         //2.将商品加入到购物车里面
         //this.$store.cartList.push(product)    //vuex修改state的时候要通过mutations修改
-        this.$store.dispatch('addCart',product);  //actions中处理异步和判断
+        /*this.$store.dispatch('addCart',product).then(res => {  //actions中处理异步和判断
+          console.log(res);
+        })*/
+        this.addCart(product).then(res => {
+          //console.log(this.$toast.show);
+          this.$toast.show(res,2000)
+        })
       }
     }
   }

@@ -27,7 +27,7 @@
           isActive(){
               //  /home -> item1(/home) = true
               //  /home -> item1(/category) = false
-              //  /home -> item1(/shopcart) = false
+              //  /home -> item1(/cart) = false
               //  /home -> item1(/profile) = false
               return this.$route.path.indexOf(this.path) !== -1
           },
