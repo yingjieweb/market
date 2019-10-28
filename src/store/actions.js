@@ -9,11 +9,11 @@ export default {
       //2.判断oldProduct是否有值
       if (oldProduct){
         context.commit(ADD_COUNTER,oldProduct);
-        resolve('当前商品数量加1')
+        resolve('购物车中该商品数量 +1')
       }else{
         payload.count = 1;
         context.commit(ADD_TO_CART,payload);
-        resolve('添加当前商品数量')
+        resolve('已添加到购物车')
       }
     })
   }
