@@ -1,6 +1,6 @@
 <template>
   <div class="profile">
-    <nav-bar class="nav-bar"><div slot="center">饭团商城</div></nav-bar>
+    <nav-bar class="nav-bar"><div slot="center">基于高相似度群体的购物推荐系统</div></nav-bar>
     <scroll class="content">
       <user-info></user-info>
 

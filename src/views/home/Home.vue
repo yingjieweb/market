@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <nav-bar class="home-nav"><div slot="center">基于高相似度群体的购物推荐系统</div></nav-bar>
     <tab-control :titles="['流行','新款','精选']" @tabClick = "tabClick" ref="tabControl1" class="tab-control" v-show="isTabFixed"></tab-control>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="loadMore">
       <home-swiper :banners = "banners" @swiperImageLoad = "swiperImageLoad"></home-swiper>
